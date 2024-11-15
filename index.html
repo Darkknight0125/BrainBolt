@@ -1,0 +1,170 @@
+<style>
+    body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(231, 218, 218, 0.91)
+    }
+    #Question-box{
+        align-items: center;
+        font-size: 20px;
+    }
+    #Question-main{
+        font-weight: bold;
+        margin: 40px 30px 30px 30px;
+        text-align: center;
+        font-size: 25px;
+        line-height: 40px;
+    }
+    #Options-section{
+        padding: 0px 20px 40px 20px;
+    }
+    #Options-section div{
+        padding: 10px;
+    }
+    #Submit-button{
+        height: 35px;
+        text-align: center;
+        padding-top: 15px;
+        font-size: 17px;
+        color: white;
+        background-color: rgb(210, 8, 233);
+    }
+    #Outer-box{
+        font-family: Arial, Helvetica, sans-serif;
+        width: 600px;
+        border: 1px solid gray;
+        border-radius: 5px;
+        background-color: white;
+    }
+</style>
+<body>
+    <div id="Outer-box">
+        <div id="Question-box">
+            <div id="Question-main">
+                Question: Whats the capital of India? And this is just big to check how the font fills
+            </div>
+            <div id="Options-section">
+                <div>
+                    <input type="radio" value="Delhi" name="Options">
+                    <label>Delhi</label>
+                </div>
+                <div>
+                    <input type="radio" value="Kolkata" name="Options">
+                    <label>Kolkata</label>
+                </div>
+                <div>
+                    <input type="radio" value="Chennai" name="Options">
+                    <label>Chennai</label>
+                </div>
+                <div>
+                    <input type="radio" value="Mumbai" name="Options">
+                    <label>Mumbai</label>
+                </div>
+            </div>
+        </div>
+        <div id="Submit-button" onclick="submitAnswer()">
+            Submit
+        </div>
+    </div>
+    <script src="data.js"></script>
+    <script>
+
+        console.log(quizData);
+        state = {
+            currentIndex: 0,
+            currentScore: 0
+        }
+
+        function submitAnswer(){
+
+            if(state.currentIndex == -1){
+
+                state.currentIndex++;
+                render();
+
+            } 
+            else{
+
+                let chosenAnswer = document.querySelector('input[name="Options"]:checked');
+                if(chosenAnswer == null){
+                    window.alert("Choose an answer");
+                    return;
+                }
+                
+                chosenAnswer = chosenAnswer.value;;
+
+                if(chosenAnswer === quizData[state.currentIndex].correct){
+                    state.currentScore++;
+                }
+
+                if(state.currentIndex == quizData.length - 1){
+
+                    const qbox = document.querySelector("#Question-main");
+                    qbox.innerHTML = `Your responses have been recorded\nYour Score: ${state.currentScore} / ${quizData.length}`;
+
+                    document.querySelector("#Options-section").innerHTML = "";
+
+                    document.querySelector("#Submit-button").innerHTML = "Retake Quiz";
+
+                    state.currentIndex = -1;
+                    state.currentScore = 0;
+
+                }
+                else{
+                    state.currentIndex++;
+                    render();
+                }
+
+                console.log("After: " + state.currentScore);
+                
+            }  
+
+        }
+
+        function optionElement(index, option){
+
+            const newInput = document.createElement("input");
+            newInput.setAttribute("type", "radio");
+            newInput.setAttribute("value", index);
+            newInput.setAttribute("name", "Options");
+
+            const newLabel = document.createElement("label");
+            newLabel.innerHTML = option;
+
+            const optionDiv = document.createElement("div");
+            optionDiv.appendChild(newInput);
+            optionDiv.appendChild(newLabel);
+
+            return optionDiv;
+
+        }
+
+        function render(){
+
+            const index = state.currentIndex;
+            let questionText = quizData[index].question;
+            let options = ['a', 'b', 'c', 'd'];
+
+            document.querySelector("#Question-main").innerHTML = questionText;
+
+            const OpSec = document.querySelector("#Options-section");
+            OpSec.innerHTML = "";
+
+            for(let i = 0; i < options.length; i++){
+
+                let optionIndex = options[i];
+                let optionText = quizData[index][optionIndex];
+
+                OpSec.appendChild(optionElement(optionIndex, optionText));
+
+            }
+
+            document.querySelector("#Submit-button").innerHTML = "Submit";
+
+        }
+
+        render();
+
+    </script>
+</body>
